@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  frontend-gateway:
+    build:
+      context: ./frontend-gateway
+    ports:
+      - "5005:5005"  # Expose the frontend gateway on localhost:5005
+    environment:
+      WEATHER_API_BASE_URL: http://weather-api
+      RECOMMENDATION_ENGINE_BASE_URL: http://recommendation-engine
+    depends_on:
+      - weather-api
+      - recommendation-engine
+
+  weather-api:
+    build:
+      context: ./weather-api  # Path to the weather-api directory
+    ports:
+      - "5001:5001"  # Expose the weather API on localhost:5001
+
+  recommendation-engine:
+    build:
+      context: ./recommendation-engine  # Path to the recommendation-engine directory
+    ports:
+      - "5003:5003"  # Expose the recommendation engine on localhost:5003
+    environment:
+      REDIS_HOST: redis  # Use Redis service for caching
+    depends_on:
+      - redis
+
+  user-preferences:
+    build: .
+    ports:
+      - "5002:5002"
+    environment:
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/user_preferences"
+    depends_on:
+      - postgres
+
+  alert-notification:
+    image: weatherhub-alert-notification
+    build:
+      context: ./Alert-notification
+    ports:
+      - "5004:5004"
+    environment:
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      TWILIO_API_KEY: ${TWILIO_API_KEY}
+
+  redis:
+    image: redis:6.2  # Use the official Redis image
+    ports:
+      - "6379:6379"  # Expose Redis on localhost:6379
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: user_preferences
+    ports:
+      - "5432:5432"

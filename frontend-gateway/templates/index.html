@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WeatherHub ☀️🌧️</title>
+    <link rel="icon" href="/static/{{ favicon }}" type="image/x-icon">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2,
+        h3 {
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        #suggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 300px;
+            margin: 0 auto;
+            z-index: 1000;
+        }
+
+        #suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+    <script>
+        async function fetchCitySuggestions(query) {
+            console.log("Query:", query); // Log the query
+            if (query.length < 3) {
+                document.getElementById('suggestions').innerHTML = '';
+                return;
+            }
+
+            const apiUrl = `/city-suggestions?q=${query}`;
+            console.log("API URL:", apiUrl); // Log the API URL
+
+            try {
+                const response = await fetch(apiUrl);
+                console.log("Response:", response); // Log the response
+                const data = await response.json();
+                console.log("Data:", data); // Log the parsed data
+
+                const suggestionsContainer = document.getElementById('suggestions');
+                suggestionsContainer.innerHTML = '';
+
+                if (data.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.textContent = "No results found";
+                    suggestionsContainer.appendChild(noResults);
+                }
+
+                data.forEach(city => {
+                    const cityName = `${city.name}, ${city.country}`;
+                    const div = document.createElement('div');
+                    div.textContent = cityName;
+                    div.onclick = () => {
+                        document.querySelector('input[name="city"]').value = cityName;
+                        suggestionsContainer.innerHTML = '';
+                    };
+                    suggestionsContainer.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error fetching city suggestions:", error);
+            }
+        }
+
+        function validateForm() {
+            const cityInput = document.querySelector('input[name="city"]');
+            const city = cityInput.value.trim();
+            if (!/^[a-zA-Z\s]+$/.test(city)) {
+                alert("Please enter a valid city name (letters and spaces only).");
+                return false;
+            }
+            return true;
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
+</head>
+
+<body>
+    <h1>WeatherHub ☀️🌧️</h1>
+    <form method="POST" onsubmit="return validateForm() && showLoading()">
+        <div style="position: relative; display: inline-block; width: 300px;">
+            <input name="city" placeholder="Enter city" required oninput="fetchCitySuggestions(this.value)"
+                style="width: 100%;">
+            <div id="suggestions"></div>
+        </div>
+        <button type="submit">Get Weather</button>
+    </form>
+    <p id="loading" style="display: none;">Loading...</p>
+
+    {% if not weather and not recommendation %}
+    <p>Enter a city name to get the weather and recommendations.</p>
+    {% endif %}
+
+    {% if weather.error %}
+    <p style="color: red;">{{ weather.error }}</p>
+    {% elif weather and 'main' in weather %}
+    <p>Temperature: {{ weather.main.temp | round }}°C</p>
+    <p>Condition: {{ weather.weather[0].description }}</p>
+    {% else %}
+    <p style="color: red;">No weather data available.</p>
+    {% endif %}
+
+    {% if recommendation and recommendation.error %}
+    <p style="color: red;">Error: {{ recommendation.error }}</p>
+    {% elif recommendation %}
+    <h3>{{ recommendation.message }}</h3>
+    {% endif %}
+</body>
+
+</html>

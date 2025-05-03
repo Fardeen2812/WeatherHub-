@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weatherhub-api
+  namespace: weatherhub
+  labels:
+    app: weatherhub-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: weatherhub-api
+  template:
+    metadata:
+      labels:
+        app: weatherhub-api
+    spec:
+      containers:
+        - name: weatherhub-api
+          image: weatherhubredisacr.azurecr.io/weatherhub-weather-api:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: OPENWEATHER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: OPENWEATHER_API_KEY
+      imagePullSecrets:
+        - name: acr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weatherhub-api
+  namespace: weatherhub
+spec:
+  selector:
+    app: weatherhub-api
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: clusterIP

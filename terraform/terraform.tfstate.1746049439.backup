@@ -1,0 +1,35 @@
+{
+  "version": 4,
+  "terraform_version": "1.11.4",
+  "serial": 26,
+  "lineage": "bfacde2f-3f1c-7e5b-19b1-bf4a4fc6f2e9",
+  "outputs": {
+    "aks_cluster_name": {
+      "value": "weatherhub-aks",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "azurerm_client_config",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/azurerm\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "client_id": "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+            "id": "Y2xpZW50Q29uZmlncy9jbGllbnRJZD0wNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDY7b2JqZWN0SWQ9MTUzMzk0N2UtYTljMi00NzM5LWI1ODAtMjhiZjE5MmZjYmJmO3N1YnNjcmlwdGlvbklkPTYzMGFlNzdhLWJhMjYtNGQ1OS04NGRiLWVjZDYzOTk2YzdhNjt0ZW5hbnRJZD02ODU4OTgyYy1kMmM5LTQ2N2ItYThjNC0xZDJiNTc3MTI2ZGY=",
+            "object_id": "1533947e-a9c2-4739-b580-28bf192fcbbf",
+            "subscription_id": "630ae77a-ba26-4d59-84db-ecd63996c7a6",
+            "tenant_id": "6858982c-d2c9-467b-a8c4-1d2b577126df",
+            "timeouts": null
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

@@ -1,0 +1,22 @@
+# Ignore Python virtual environments
+.venv/
+__pycache__/
+*.pyc
+
+# Ignore environment files
+.env
+
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Ignore logs
+*.log
+
+# Ignore Docker-related files
+*.env
+
+# Ignore Git backup files
+.git_backup/

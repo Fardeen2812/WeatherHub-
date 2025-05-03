@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = 'weatherhubredisacr.azurecr.io'
+        KUBE_CONFIG = credentials('kubeconfig') // saved Jenkins credential
+    }
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/your-github/weatherhub.git'
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh 'docker build -t $DOCKER_REGISTRY/weather-api:latest ./weather-api'
+                sh 'docker build -t $DOCKER_REGISTRY/user-preferences:latest ./user-preferences'
+                sh 'docker build -t $DOCKER_REGISTRY/recommendation-engine:latest ./recommendation-engine'
+                sh 'docker build -t $DOCKER_REGISTRY/alerts-notifications:latest ./alerts-notifications'
+                sh 'docker build -t $DOCKER_REGISTRY/frontend-gateway:latest ./frontend-gateway'
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                sh 'docker push $DOCKER_REGISTRY/weather-api:latest'
+                sh 'docker push $DOCKER_REGISTRY/user-preferences:latest'
+                sh 'docker push $DOCKER_REGISTRY/recommendation-engine:latest'
+                sh 'docker push $DOCKER_REGISTRY/alerts-notifications:latest'
+                sh 'docker push $DOCKER_REGISTRY/frontend-gateway:latest'
+            }
+        }
+
+        stage('Deploy to AKS') {
+            steps {
+                sh '''
+                kubectl apply -f k8s/
+                '''
+            }
+        }
+    }
+}

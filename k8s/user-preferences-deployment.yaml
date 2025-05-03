@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-preferences
+  namespace: weatherhub
+  labels:
+    app: user-preferences
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-preferences
+  template:
+    metadata:
+      labels:
+        app: user-preferences
+    spec:
+      containers:
+        - name: user-preferences
+          image: weatherhubredisacr.azurecr.io/weatherhub-user-preference:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: database-url
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: jwt-secret
+      imagePullSecrets:
+        - name: acr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-preferences
+  namespace: weatherhub
+spec:
+  selector:
+    app: user-preferences
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+  type: clusterIP

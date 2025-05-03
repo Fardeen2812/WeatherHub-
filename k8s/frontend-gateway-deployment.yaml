@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-gateway
+  namespace: weatherhub
+  labels:
+    app: frontend-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-gateway
+  template:
+    metadata:
+      labels:
+        app: frontend-gateway
+    spec:
+      containers:
+        - name: frontend-gateway
+          image: weatherhubredisacr.azurecr.io/weatherhub-frontend-gateway:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: WEATHER_API_URL
+              value: "http://weatherhub-api.weatherhub.svc.cluster.local:5001"
+            - name: USER_PREFERENCES_URL
+              value: "http://user-preferences.weatherhub.svc.cluster.local:5002"
+            - name: RECOMMENDATION_ENGINE_URL
+              value: "http://recommendation-engine.weatherhub.svc.cluster.local:5003"
+      imagePullSecrets:
+        - name: acr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-gateway
+  namespace: weatherhub
+spec:
+  selector:
+    app: frontend-gateway
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer

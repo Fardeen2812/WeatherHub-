@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerts-notifications
+  namespace: weatherhub
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alerts-notifications
+  template:
+    metadata:
+      labels:
+        app: alerts-notifications
+    spec:
+      containers:
+        - name: alerts-notifications
+          image: weatherhubredisacr.azurecr.io/weatherhub-alert-notification:latest
+          ports:
+            - containerPort: 5004
+          env:
+            - name: TWILIO_ACCOUNT_SID
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: twilioaccountsid
+            - name: TWILIO_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: twilioauthtoken
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weatherhub-secrets
+                  key: sendgridapikey
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alerts-notifications
+  namespace: weatherhub
+spec:
+  selector:
+    app: alerts-notifications
+  ports:
+    - protocol: TCP
+      port: 5004
+      targetPort: 5004

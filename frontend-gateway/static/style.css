@@ -1,0 +1,108 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Headings styling */
+h1 {
+    font-size: 36px;
+    color: #007BFF;
+    margin-bottom: 20px;
+}
+
+h2,
+h3 {
+    margin-top: 20px;
+    color: #333;
+}
+
+/* Paragraph styling */
+p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+p.error {
+    color: red;
+    font-weight: bold;
+}
+
+/* Loading indicator */
+#loading {
+    font-size: 16px;
+    color: #007BFF;
+    margin-top: 10px;
+}
+
+/* Suggestions styling */
+#suggestions {
+    position: absolute;
+    /* Position it relative to the input field */
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 300px;
+    /* Match the width of the input field */
+    z-index: 1000;
+    left: 0;
+    /* Align it with the input field */
+    margin-top: 5px;
+    /* Add some space below the input field */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Optional: Add a shadow for better visibility */
+}
+
+#suggestions div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#suggestions div:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
